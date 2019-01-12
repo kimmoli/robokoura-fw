@@ -134,11 +134,8 @@ CSRC = $(STARTUPSRC) \
        neopixel.c \
        servo.c \
        oled.c \
-       shell/cmd_diic.c \
-       shell/cmd_piic.c \
        shell/cmd_deep.c \
        shell/cmd_peep.c \
-       shell/cmd_probe.c \
        shell/cmd_ps2.c \
        shell/cmd_stepper.c \
        shell/cmd_neopixel.c \
@@ -177,6 +174,7 @@ ASMSRC =
 ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = ./shell ./threads \
+         $(COMMONINC) \
          $(CHIBIOS)/os/license \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
