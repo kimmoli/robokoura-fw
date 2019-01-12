@@ -1,0 +1,132 @@
+#include "hal.h"
+#include "neopixel.h"
+#include "helpers.h"
+
+static virtual_timer_t vt1;
+static void neoTXEnd(UARTDriver *uartp);
+static void neoSend(void *p);
+static void encodeBits( uint32_t color , uint8_t *buffer );
+
+static uint8_t txBuf[8 * NUMLEDS] = {0};
+uint32_t neoLedColors[NUMLEDS] = {0};
+ledloopConfig_t *ledloopConfig;
+
+const UARTConfig uartConf =
+{
+  NULL,   /* UART transmission buffer callback.           */
+  neoTXEnd,   /* UART physical end of transmission callback.  */
+  NULL,   /* UART Receiver receiver filled callback.      */
+  NULL,   /* UART caracter received callback.             */
+  NULL,   /* UART received error callback.                */
+  1000000,  /* UART baudrate.                               */
+  0,
+  0,
+  0
+};
+
+
+void initNeopixel(void)
+{
+    ledloopConfig = chHeapAlloc(NULL, sizeof(ledloopConfig_t));
+
+    uartStart(&UARTD2, &uartConf);
+
+    /* Tweak UART to 2.5Mbps, Chibi macros can't do this
+        - Requires 8-bit oversampling
+        - Divider is 1.5 (60 MHz/8*2.5 MHz)
+        - Mantissa = 1
+        - Fraction = 8*0.5 = 4
+
+       Also configure UART to half-duplex mode (HDSEL)
+       This will automatically release TX pin to a IO pin when
+       data is not transmitted.
+       IO is configured with pull-down, so all idle times are low
+    */
+
+    UARTD2.usart->CR1 &= ~USART_CR1_UE;
+    UARTD2.usart->BRR = 0x14;
+    UARTD2.usart->CR3 |= USART_CR3_HDSEL;
+    UARTD2.usart->CR1 |= (USART_CR1_OVER8 | USART_CR1_UE);
+
+    chVTSet(&vt1, MS2ST(UPDATE_INTERVAL), neoSend, NULL);
+}
+
+void neoSend(void *p)
+{
+    (void) p;
+
+    int i = 0;
+
+    for (i=0; i < NUMLEDS; i++)
+    {
+        encodeBits(neoLedColors[i], txBuf+(8 * i));
+    }
+
+    chSysLockFromISR();
+    uartStartSendI(&UARTD2, 8 * NUMLEDS, txBuf);
+    chSysUnlockFromISR();
+}
+
+void neoTXEnd(UARTDriver *uartp)
+{
+    (void)uartp;
+
+    chSysLockFromISR();
+    chVTResetI(&vt1);
+    chVTSetI(&vt1, MS2ST(UPDATE_INTERVAL), neoSend, NULL);
+    chSysUnlockFromISR();
+}
+
+// Encode a 24 bit value into 8 bytes where each byte has the format...
+// 0b?0?10?10
+// Where each ? is a bit from the orginal 24 bit value.
+// This wonky format is designed to generate correct NeoPixel
+// signals when sent out a serial port and surrounded with stop and start bits.
+
+void encodeBits( uint32_t color , uint8_t *b )
+{
+    int bits=24;
+
+    /* Swap data order, WS2812B data format is GRB */
+    uint32_t x = (color & 0xff) | ((color & 0xff00) << 8) | ((color & 0xff0000) >> 8);
+
+    while (bits)
+    {
+
+        // Process 3 bits of the input into 1 byte on the output
+        //
+        // Note that we processes the input by shifting up and checking the high bit (#23)
+        // This is becuase NeoPixels actually take thier data in MSB first order
+        // while serial ports send in LSB first order
+
+        uint8_t t=0b00010010;     // initialize with all the known 1's
+
+        if (x & (1 << 23))
+        {
+            t |= 0b00000100;
+        }
+
+        x <<= 1;
+        bits--;
+
+        if (x & (1 << 23))
+        {
+            t |= 0b00100000;
+        }
+
+        x <<= 1;
+        bits--;
+
+        if (x & (1 << 23) )
+        {
+            t |= 0b10000000;
+        }
+
+        x <<= 1;
+        bits--;
+
+        *b = t;
+
+        b++;
+    }
+}
