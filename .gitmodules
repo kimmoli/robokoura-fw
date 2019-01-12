@@ -1,0 +1,9 @@
+[submodule "ChibiOS"]
+	path = ChibiOS
+	url = https://github.com/kimmoli/ChibiOS.git
+[submodule "ChibiOS-Contrib"]
+	path = ChibiOS-Contrib
+	url = https://github.com/kimmoli/ChibiOS-Contrib.git
+[submodule "common"]
+	path = common
+	url = https://github.com/kimmoli/telakone-common.git
