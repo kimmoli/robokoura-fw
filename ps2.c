@@ -32,14 +32,14 @@ void sendPS2(uint8_t *tx, int count, uint8_t *rx)
 {
     int i;
 
-    palClearLine(LINE_GPIOA_SPI1_CS_N);
+    palClearLine(LINE_SPI_CS_PS2_N);
 
     for (i=0 ; i < count; i++)
     {
         spiExchange(&SPID1, 1, tx+i, rx+i);
     }
 
-    palSetLine(LINE_GPIOA_SPI1_CS_N);
+    palSetLine(LINE_SPI_CS_PS2_N);
 }
 
 void sendPS2Config(void)

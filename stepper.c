@@ -71,27 +71,27 @@ static void startStepper(StepperDriver *stepp)
 void initStepper(void)
 {
     STEPPERD1.pwmp = &PWMD4;
-    STEPPERD1.directionLine = LINE_GPIOE_DIR1;
+    STEPPERD1.directionLine = LINE_DIR_0;
     startStepper(&STEPPERD1);
 
     STEPPERD2.pwmp = &PWMD5;
-    STEPPERD2.directionLine = LINE_GPIOE_DIR2;
+    STEPPERD2.directionLine = LINE_DIR_1;
     startStepper(&STEPPERD2);
 
     STEPPERD3.pwmp = &PWMD8;
-    STEPPERD3.directionLine = LINE_GPIOE_DIR3;
+    STEPPERD3.directionLine = LINE_DIR_2;
     startStepper(&STEPPERD3);
 
     STEPPERD4.pwmp = &PWMD9;
-    STEPPERD4.directionLine = LINE_GPIOE_DIR4;
+    STEPPERD4.directionLine = LINE_DIR_3;
     startStepper(&STEPPERD4);
 
     STEPPERD5.pwmp = &PWMD10;
-    STEPPERD5.directionLine = LINE_GPIOE_DIR5;
+    STEPPERD5.directionLine = LINE_DIR_4;
     startStepper(&STEPPERD5);
 
     STEPPERD6.pwmp = &PWMD11;
-    STEPPERD6.directionLine = LINE_GPIOE_DIR6;
+    STEPPERD6.directionLine = LINE_DIR_5;
     startStepper(&STEPPERD6);
 }
 
