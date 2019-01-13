@@ -130,13 +130,13 @@ void i2cVtCb(void *p)
     chSysUnlockFromISR();
 }
 
-static msg_t setreg(uint8_t addr, uint8_t reg, uint8_t val)
+msg_t setreg(uint8_t addr, uint8_t reg, uint8_t val)
 {
     uint8_t txBuf[2];
     msg_t ret;
 
     txBuf[0] = reg;
-    txBuf[1] = val; /* DR=50Hz, LNOISE, FREAD=0, ACTIVE */
+    txBuf[1] = val;
 
     i2cAcquireBus(&I2CD1);
     ret = i2cMasterTransmit(&I2CD1, addr, txBuf, 2, NULL, 0);

@@ -29,11 +29,12 @@ int main(void)
     consoleStream = (BaseSequentialStream *) &SD3;
 
     PRINT("\n\r");
-    PRINT("\n\rTAOBAO STM32F407VET BOARD");
-    PRINT("\n\r-------------------------");
+    PRINT("\n\rROBOKOURA STM32F407ZG BOARD");
+    PRINT("\n\r---------------------------");
     PRINT("\n\r\n\r");
 
     initI2c();
+#if 0
     initSpi();
     initStepper();
     initPS2();
@@ -43,18 +44,26 @@ int main(void)
 
     clearOled();
     drawText(0, 0, "ROBOKOURA", 2);
-
+#endif
     shellInit();
     chThdCreateFromHeap(NULL, SHELL_WA_SIZE, "shell", NORMALPRIO + 1, shellThread, (void *)&shell_cfg_uart);
+
+    palClearLine(LINE_ERR_LED);
+    palToggleLine(LINE_DEBUG_LED);
+    setreg(0x42, 0x01, 0xfc);
 
     while (true)
     {
         chThdSleepMilliseconds(200);
-        palToggleLine(LINE_GPIOC_DEBUG_LED);
+        palToggleLine(LINE_RUN_LED);
+        palToggleLine(LINE_DEBUG_LED);
+        setreg(0x42, 0x03, 0xfc | fill);
 
         fill = !fill;
+#if 0
 
         fillRect(125, 0, 3, 3, fill);
         updateOled();
+#endif
     }
 }

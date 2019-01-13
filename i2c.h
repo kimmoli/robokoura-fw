@@ -28,6 +28,7 @@ extern bool autoaxis;
  * on this event, thread will update temperature reading
  */
 extern void initI2c(void);
+extern msg_t setreg(uint8_t addr, uint8_t reg, uint8_t val);
 
 #endif // _I2C_H
 
