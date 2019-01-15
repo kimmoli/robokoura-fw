@@ -19,7 +19,7 @@
 
 int main(void)
 {
-    int fill = 0;
+    int fill = 0x01;
 
     halInit();
     chSysInit();
@@ -50,16 +50,28 @@ int main(void)
 
     palClearLine(LINE_ERR_LED);
     palToggleLine(LINE_DEBUG_LED);
+    setreg(0x40, 0x01, 0xfc);
     setreg(0x42, 0x01, 0xfc);
+    setreg(0x43, 0x01, 0xfc);
+    setreg(0x44, 0x01, 0xfc);
+    setreg(0x45, 0x01, 0xfc);
 
     while (true)
     {
-        chThdSleepMilliseconds(200);
+        chThdSleepMilliseconds(100);
         palToggleLine(LINE_RUN_LED);
         palToggleLine(LINE_DEBUG_LED);
-        setreg(0x42, 0x03, 0xfc | fill);
+        setreg(0x40, 0x03, 0xfd | ~((fill & 1) << 1));
+        setreg(0x42, 0x03, 0xfd | ~((fill & 2)));
+        setreg(0x43, 0x03, 0xfd | ~((fill & 4) >> 1));
+        setreg(0x44, 0x03, 0xfd | ~((fill & 8) >> 2));
+        setreg(0x45, 0x03, 0xfd | ~((fill & 0x10) >> 3));
 
-        fill = !fill;
+        fill = fill << 1;
+
+        if (fill & 0x20)
+            fill = 0x01;
+
 #if 0
 
         fillRect(125, 0, 3, 3, fill);

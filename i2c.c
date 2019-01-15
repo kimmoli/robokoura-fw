@@ -17,9 +17,10 @@ I2CValues_t *I2CValues;
 
 const I2CConfig i2cConfig =
 {
-    OPMODE_I2C,      // operation mode I2C
-    400000,          // speek 100kbits
-    FAST_DUTY_CYCLE_2//STD_DUTY_CYCLE   // standard duty-cycle
+    OPMODE_I2C,       // operation mode I2C
+    400000,           // speed
+//    STD_DUTY_CYCLE   // for 100k
+    FAST_DUTY_CYCLE_2 // for 400k
 };
 
 static THD_FUNCTION(i2cThread, arg)
@@ -170,7 +171,7 @@ void initI2c(void)
     I2CValues->z[1] = 0.0;
     I2CValues->Pitch[1] = 0.0;
     I2CValues->Roll[1] = 0.0;
-
+#if 0
     ret = setreg(ACCEL0_ADDR, 0x2a, 0x00);
 
     if (ret == MSG_OK)
@@ -194,6 +195,7 @@ void initI2c(void)
     chThdCreateFromHeap(NULL, THD_WORKING_AREA_SIZE(2048), "i2c", NORMALPRIO+1, i2cThread, NULL);
 
     chVTSet(&i2cVt, MS2ST(I2C_UPDATE_INTERVAL), i2cVtCb, NULL);
+#endif
 }
 
 /*
