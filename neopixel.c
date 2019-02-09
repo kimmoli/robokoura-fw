@@ -7,7 +7,7 @@ static void neoTXEnd(UARTDriver *uartp);
 static void neoSend(void *p);
 static void encodeBits( uint32_t color , uint8_t *buffer );
 
-static uint8_t txBuf[8 * NUMLEDS] = {0};
+uint8_t neoTxBuf[8 * NUMLEDS] = {0};
 uint32_t neoLedColors[NUMLEDS] = {0};
 ledloopConfig_t *ledloopConfig;
 
@@ -44,11 +44,14 @@ void initNeopixel(void)
     */
 
     UARTD2.usart->CR1 &= ~USART_CR1_UE;
-    UARTD2.usart->BRR = 0x14;
+    UARTD2.usart->BRR = 0x10;
     UARTD2.usart->CR3 |= USART_CR3_HDSEL;
     UARTD2.usart->CR1 |= (USART_CR1_OVER8 | USART_CR1_UE);
 
     chVTSet(&vt1, MS2ST(UPDATE_INTERVAL), neoSend, NULL);
+
+    for (int i = 0 ; i < NUMLEDS; i++)
+        neoLedColors[i] = 0;
 }
 
 void neoSend(void *p)
@@ -59,11 +62,11 @@ void neoSend(void *p)
 
     for (i=0; i < NUMLEDS; i++)
     {
-        encodeBits(neoLedColors[i], txBuf+(8 * i));
+        encodeBits(neoLedColors[i], neoTxBuf+(8 * i));
     }
 
     chSysLockFromISR();
-    uartStartSendI(&UARTD2, 8 * NUMLEDS, txBuf);
+    uartStartSendI(&UARTD2, 8 * NUMLEDS +1, neoTxBuf);
     chSysUnlockFromISR();
 }
 

@@ -2,6 +2,7 @@
 #include "ps2.h"
 #include "i2c.h"
 #include "stepper.h"
+#include "servo.h"
 #include <stdlib.h>
 #include "helpers.h"
 
@@ -113,8 +114,6 @@ static THD_FUNCTION(PS2Thread, arg)
             PS2Values->motor2 = 0;
         }
 
-if (!autoaxis)
-{
         if (PS2Values->buttons & BUTTON_UP)
         {
             setStepper(&STEPPERD1, RATIOD1 * PS2Values->pressure_up, DIR_CW);
@@ -127,7 +126,7 @@ if (!autoaxis)
         {
             setStepper(&STEPPERD1, 0, DIR_RETAIN);
         }
-}
+
         if (PS2Values->buttons & BUTTON_LEFT)
         {
             setStepper(&STEPPERD2, RATIOD2 * PS2Values->pressure_left, DIR_CW);

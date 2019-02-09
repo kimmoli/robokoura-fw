@@ -34,12 +34,12 @@ int main(void)
     PRINT("\n\r\n\r");
 
     initI2c();
-#if 0
     initSpi();
     initStepper();
     initPS2();
-    initNeopixel();
     initServo();
+    initNeopixel();
+#if 0
     initOled();
 
     clearOled();

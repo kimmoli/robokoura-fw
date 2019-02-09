@@ -4,6 +4,7 @@
 #include "chprintf.h"
 #include "shellcommands.h"
 #include "neopixel.h"
+#include "helpers.h"
 
 static virtual_timer_t ledloopVt;
 
@@ -129,7 +130,11 @@ void cmd_neopixel(BaseSequentialStream *chp, int argc, char *argv[])
 
     if (argc >= 1)
     {
-        if (strcmp(argv[0], "set") == 0)
+        if (strcmp(argv[0], "dump") == 0)
+        {
+            dump((char *)neoTxBuf, 8*NUMLEDS);
+        }
+        else if (strcmp(argv[0], "set") == 0)
         {
             if (argc >= 3)
             {

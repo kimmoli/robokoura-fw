@@ -22,15 +22,5 @@ void cmd_accel(BaseSequentialStream *chp, int argc, char *argv[])
             chprintf(chp, "%d: Not present\n\r", i);
         }
     }
-
-    if (argc == 1 && strcmp(argv[0], "auto") == 0)
-    {
-        autoaxis = true;
-    }
-    else
-    {
-        autoaxis = false;
-        setStepper(&STEPPERD1, 0, DIR_RETAIN);
-    }
 }
 

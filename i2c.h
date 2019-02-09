@@ -19,7 +19,6 @@ typedef struct
 
 extern I2CValues_t *I2CValues;
 extern event_source_t i2cPoll;
-extern bool autoaxis;
 
 /*
  * Initialize I2C sybsystem, timer and thread

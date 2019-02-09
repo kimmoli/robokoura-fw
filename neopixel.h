@@ -20,6 +20,6 @@ typedef struct
 extern uint32_t neoLedColors[];
 extern ledloopConfig_t *ledloopConfig;
 extern void initNeopixel(void);
-
+extern uint8_t neoTxBuf[8 * NUMLEDS];
 #endif // _NEOPIXEL_H
 

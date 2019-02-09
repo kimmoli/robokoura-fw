@@ -37,6 +37,8 @@ void initServo(void)
     SERVOD2.pwmp = &PWMD3;
     SERVOD2.channel = 1;
     setServo(&SERVOD2, 1500);
+
+    palClearLine(LINE_ENABLE_PWM_N);
 }
 
 
