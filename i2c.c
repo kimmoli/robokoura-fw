@@ -12,6 +12,8 @@ event_source_t i2cPoll;
 
 I2CValues_t *I2CValues;
 
+uint8_t limits;
+
 #define ACC_SCALE (1024.0)
 
 const I2CConfig i2cConfig =
@@ -25,12 +27,6 @@ const I2CConfig i2cConfig =
 static THD_FUNCTION(i2cThread, arg)
 {
     (void)arg;
-    uint8_t rxBuf[6];
-    msg_t ret;
-    float p = 0.0;
-    int32_t pp = 0;
-    int32_t ppp = 0;
-    int16_t x,y,z;
 
     event_listener_t eli2c;
 
@@ -70,10 +66,23 @@ msg_t setreg(uint8_t addr, uint8_t reg, uint8_t val)
     return ret;
 }
 
-void initI2c(void)
+uint8_t getreg(uint8_t addr, uint8_t reg)
 {
+    uint8_t txBuf[2];
+    uint8_t rxBuf[2];
     msg_t ret;
 
+    txBuf[0] = reg;
+
+    i2cAcquireBus(&I2CD1);
+    ret = i2cMasterTransmit(&I2CD1, addr, txBuf, 1, rxBuf, 1);
+    i2cReleaseBus(&I2CD1);
+
+    return rxBuf[0];
+}
+
+void initI2c(void)
+{
     while (!i2cBusReset()) { }
 
     i2cStart(&I2CD1, &i2cConfig);

@@ -20,6 +20,7 @@
 int main(void)
 {
     int fill = 0x01;
+    limits = 0;
 
     halInit();
     chSysInit();
@@ -71,6 +72,12 @@ int main(void)
 
         if (fill & 0x20)
             fill = 0x01;
+
+        limits = (getreg(0x40, 0x00) & 0x0c) >> 2;
+        limits |= (getreg(0x45, 0x00) & 0x0c);
+
+        if (limits != 0x0f)
+            PRINT("%01x\n\r", limits);
 
 #if 0
 

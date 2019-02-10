@@ -12,6 +12,14 @@ void cmd_stepper(BaseSequentialStream *chp, int argc, char *argv[])
 
     if (argc >= 2)
     {
+        if (strcmp(argv[0], "e") == 0)
+        {
+            uint32_t mot = strtol(argv[0], NULL, 10) -1;
+            palToggleLine(PAL_LINE(GPIOG, mot));
+
+            return;
+        }
+
         if (argc >= 3)
         {
             if ((strcmp(argv[2], "r") == 0) || (strcmp(argv[2], "ccw") == 0))

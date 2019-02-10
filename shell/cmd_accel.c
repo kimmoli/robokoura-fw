@@ -8,6 +8,9 @@
 
 void cmd_accel(BaseSequentialStream *chp, int argc, char *argv[])
 {
+    (void) argc;
+    (void) argv;
+
     int i;
 
     for (i=0; i < 2; i++)

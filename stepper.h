@@ -20,10 +20,11 @@ extern StepperDriver STEPPERD6;
 #define DIR_CCW    PAL_HIGH
 #define DIR_RETAIN 9U
 
-#define RATIOD1 12
-#define RATIOD2 40
-#define RATIOD3 12
-#define RATIOD4 12
+#define RATIOD1 50
+#define RATIOD2 50
+#define RATIOD3 50
+#define RATIOD4 50
+#define RATIOD5 50
 
 extern void initStepper(void);
 extern void setStepper(StepperDriver *stepp, uint32_t frequency, uint32_t direction);

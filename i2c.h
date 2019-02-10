@@ -19,6 +19,7 @@ typedef struct
 
 extern I2CValues_t *I2CValues;
 extern event_source_t i2cPoll;
+extern uint8_t limits;
 
 /*
  * Initialize I2C sybsystem, timer and thread
@@ -28,6 +29,7 @@ extern event_source_t i2cPoll;
  */
 extern void initI2c(void);
 extern msg_t setreg(uint8_t addr, uint8_t reg, uint8_t val);
+extern uint8_t getreg(uint8_t addr, uint8_t reg);
 
 #endif // _I2C_H
 
