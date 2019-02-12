@@ -2,6 +2,7 @@
 #include "hal.h"
 #include "i2c.h"
 #include "stepper.h"
+#include "sensor.h"
 #include <math.h>
 #include "helpers.h"
 
@@ -9,8 +10,6 @@ static bool i2cBusReset(void);
 static int i2cEnabled;
 virtual_timer_t i2cVt;
 event_source_t i2cPoll;
-
-I2CValues_t *I2CValues;
 
 uint8_t limits;
 
@@ -20,7 +19,6 @@ const I2CConfig i2cConfig =
 {
     OPMODE_I2C,       // operation mode I2C
     400000,           // speed
-//    STD_DUTY_CYCLE   // for 100k
     FAST_DUTY_CYCLE_2 // for 400k
 };
 
@@ -29,12 +27,38 @@ static THD_FUNCTION(i2cThread, arg)
     (void)arg;
 
     event_listener_t eli2c;
+    int leds = 0x00;
 
     chEvtRegister(&i2cPoll, &eli2c, 7);
 
     while (!chThdShouldTerminateX())
     {
         chEvtWaitOne(EVENT_MASK(7));
+
+        if (sensorsEnabled)
+        {
+            limits = 0;
+
+            for (int i = 0 ; i < maxSensors ; i++)
+            {
+                if (leds == activeSensors[i]->instance)
+                    activeSensors[i]->leds &= 0x01;
+                else
+                    activeSensors[i]->leds |= 0x02;
+
+                setreg(activeSensors[i]->i2cAddressIO, 0x03, 0xfc | activeSensors[i]->leds);
+                activeSensors[i]->inputs = ((getreg(activeSensors[i]->i2cAddressIO, 0x00) & 0x0c) >> 2);
+
+                limits |= activeSensors[i]->inputs << ((activeSensors[i]->instance - 1)*2);
+
+                updateAcceleration(activeSensors[i]);
+            }
+        }
+
+        leds++;
+
+        if (leds > 5)
+            leds = 0x00;
     }
 
     chThdExit(MSG_OK);
@@ -56,6 +80,9 @@ msg_t setreg(uint8_t addr, uint8_t reg, uint8_t val)
     uint8_t txBuf[2];
     msg_t ret;
 
+   if (addr == 0)
+        return MSG_RESET;
+
     txBuf[0] = reg;
     txBuf[1] = val;
 
@@ -70,12 +97,14 @@ uint8_t getreg(uint8_t addr, uint8_t reg)
 {
     uint8_t txBuf[2];
     uint8_t rxBuf[2];
-    msg_t ret;
+
+   if (addr == 0)
+        return 0;
 
     txBuf[0] = reg;
 
     i2cAcquireBus(&I2CD1);
-    ret = i2cMasterTransmit(&I2CD1, addr, txBuf, 1, rxBuf, 1);
+    i2cMasterTransmit(&I2CD1, addr, txBuf, 1, rxBuf, 1);
     i2cReleaseBus(&I2CD1);
 
     return rxBuf[0];
@@ -88,22 +117,6 @@ void initI2c(void)
     i2cStart(&I2CD1, &i2cConfig);
 
     i2cEnabled = true;
-
-    I2CValues = chHeapAlloc(NULL, sizeof(I2CValues_t));
-
-    I2CValues->sensorPresent[0] = 0;
-    I2CValues->x[0] = 0.0;
-    I2CValues->y[0] = 0.0;
-    I2CValues->z[0] = 0.0;
-    I2CValues->Pitch[0] = 0.0;
-    I2CValues->Roll[0] = 0.0;
-
-    I2CValues->sensorPresent[1] = 0;
-    I2CValues->x[1] = 0.0;
-    I2CValues->y[1] = 0.0;
-    I2CValues->z[1] = 0.0;
-    I2CValues->Pitch[1] = 0.0;
-    I2CValues->Roll[1] = 0.0;
 
     chEvtObjectInit(&i2cPoll);
     chThdCreateFromHeap(NULL, THD_WORKING_AREA_SIZE(2048), "i2c", NORMALPRIO+1, i2cThread, NULL);

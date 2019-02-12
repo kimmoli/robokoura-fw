@@ -2,22 +2,9 @@
 #define _I2C_H
 
 #define EEPROM_ADDR 0x50
-#define ACCEL0_ADDR 0x1c
-#define ACCEL1_ADDR 0x1d
 
-#define I2C_UPDATE_INTERVAL 50
+#define I2C_UPDATE_INTERVAL 100
 
-typedef struct
-{
-    int16_t sensorPresent[2];
-    float x[2];
-    float y[2];
-    float z[2];
-    float Pitch[2];
-    float Roll[2];
-} I2CValues_t;
-
-extern I2CValues_t *I2CValues;
 extern event_source_t i2cPoll;
 extern uint8_t limits;
 

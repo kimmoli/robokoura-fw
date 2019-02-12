@@ -130,6 +130,7 @@ CSRC = $(STARTUPSRC) \
        i2c.c \
        spi.c \
        stepper.c \
+       sensor.c \
        ps2.c \
        neopixel.c \
        servo.c \

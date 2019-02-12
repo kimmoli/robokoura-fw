@@ -116,12 +116,10 @@ static THD_FUNCTION(PS2Thread, arg)
 
         if (PS2Values->buttons & BUTTON_UP)
         {
-            PRINT("up %d\n\r", RATIOD1 * PS2Values->pressure_up);
             setStepper(&STEPPERD1, RATIOD1 * PS2Values->pressure_up, DIR_CW);
         }
         else if (PS2Values->buttons & BUTTON_DOWN)
         {
-            PRINT("down %d\n\r", RATIOD1 * PS2Values->pressure_down);
             setStepper(&STEPPERD1, RATIOD1 * PS2Values->pressure_down, DIR_CCW);
         }
         else
@@ -131,12 +129,10 @@ static THD_FUNCTION(PS2Thread, arg)
 
         if (PS2Values->buttons & BUTTON_LEFT)
         {
-            PRINT("left %d\n\r", RATIOD5 * PS2Values->pressure_left);
             setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_left, DIR_CW);
         }
         else if (PS2Values->buttons & BUTTON_RIGHT)
         {
-            PRINT("right %d\n\r", RATIOD5 * PS2Values->pressure_right);
             setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_right, DIR_CCW);
         }
         else
@@ -146,12 +142,10 @@ static THD_FUNCTION(PS2Thread, arg)
 
         if (PS2Values->buttons & BUTTON_TRIANGLE && (limits & 0x01) == 0x01)
         {
-            PRINT("triangle %d\n\r", RATIOD3 * PS2Values->pressure_triangle);
             setStepper(&STEPPERD3, RATIOD3 * PS2Values->pressure_triangle, DIR_CW);
         }
         else if (PS2Values->buttons & BUTTON_X && (limits & 0x02) == 0x02)
         {
-            PRINT("x %d\n\r", RATIOD3 * PS2Values->pressure_x);
             setStepper(&STEPPERD3, RATIOD3 * PS2Values->pressure_x, DIR_CCW);
         }
         else
@@ -161,12 +155,10 @@ static THD_FUNCTION(PS2Thread, arg)
 
         if (PS2Values->buttons & BUTTON_SQUARE)
         {
-            PRINT("square %d\n\r", RATIOD4 * PS2Values->pressure_square);
             setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_square, DIR_CW);
         }
         else if (PS2Values->buttons & BUTTON_CIRCLE)
         {
-            PRINT("circle %d\n\r", RATIOD4 * PS2Values->pressure_circle);
             setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_circle, DIR_CCW);
         }
         else

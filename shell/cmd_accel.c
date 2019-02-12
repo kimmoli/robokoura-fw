@@ -4,7 +4,7 @@
 #include "chprintf.h"
 #include "shellcommands.h"
 #include "i2c.h"
-#include "stepper.h"
+#include "sensor.h"
 
 void cmd_accel(BaseSequentialStream *chp, int argc, char *argv[])
 {
@@ -13,16 +13,17 @@ void cmd_accel(BaseSequentialStream *chp, int argc, char *argv[])
 
     int i;
 
-    for (i=0; i < 2; i++)
+    for (i=0; i < maxSensors; i++)
     {
-        if (I2CValues->sensorPresent[i] == 1)
+        if (activeSensors[i]->active)
         {
-            chprintf(chp, "%d: X %.2f Y %.2f Z %.2f\n\r", i, I2CValues->x[i], I2CValues->y[i], I2CValues->z[i]);
-            chprintf(chp, "  Pitch %.2f Roll %.2f\n\r", I2CValues->Pitch[i], I2CValues->Roll[i]);
-        }
-        else
-        {
-            chprintf(chp, "%d: Not present\n\r", i);
+            chprintf(chp, "%d: X %.2f Y %.2f Z %.2f  Pitch %.2f Roll %.2f\n\r",
+                activeSensors[i]->instance,
+                activeSensors[i]->x,
+                activeSensors[i]->y,
+                activeSensors[i]->z,
+                activeSensors[i]->pitch,
+                activeSensors[i]->roll );
         }
     }
 }
