@@ -44,6 +44,14 @@ void cmd_stepper(BaseSequentialStream *chp, int argc, char *argv[])
     else
     {
         chprintf(chp, "step [motor] [frequency] {cw,ccw}\n\r");
+
+        for (int i=0 ; i<6; i++)
+        {
+            chprintf(chp, "%d %d -> %d %d -> %d\n\r", i, steppers[i]->setFrequency,
+                                                         steppers[i]->currentFrequency,
+                                                         steppers[i]->setDirection,
+                                                         steppers[i]->currentDirection);
+        }
     }
 }
 
