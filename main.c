@@ -17,6 +17,7 @@
 #include "neopixel.h"
 #include "servo.h"
 #include "oled.h"
+#include "adc.h"
 
 int main(void)
 {
@@ -39,6 +40,7 @@ int main(void)
     initPS2();
     initServo();
     initNeopixel();
+    initMeasurement();
 
     shellInit();
     chThdCreateFromHeap(NULL, SHELL_WA_SIZE, "shell", NORMALPRIO + 1, shellThread, (void *)&shell_cfg_uart);

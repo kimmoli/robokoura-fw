@@ -135,6 +135,7 @@ CSRC = $(STARTUPSRC) \
        neopixel.c \
        servo.c \
        oled.c \
+       adc.c \
        shell/cmd_deep.c \
        shell/cmd_peep.c \
        shell/cmd_ps2.c \
@@ -143,6 +144,7 @@ CSRC = $(STARTUPSRC) \
        shell/cmd_servo.c \
        shell/cmd_accel.c \
        shell/cmd_oled.c \
+       shell/cmd_volts.c \
        shell/shellcommands.c \
        main.c
 

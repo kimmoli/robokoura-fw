@@ -20,6 +20,7 @@ extern void cmd_neopixel(BaseSequentialStream *chp, int argc, char *argv[]);
 extern void cmd_servo(BaseSequentialStream *chp, int argc, char *argv[]);
 extern void cmd_accel(BaseSequentialStream *chp, int argc, char *argv[]);
 extern void cmd_oled(BaseSequentialStream *chp, int argc, char *argv[]);
+extern void cmd_volts(BaseSequentialStream *chp, int argc, char *argv[]);
 
 extern const ShellCommand commands[];
 extern const ShellConfig shell_cfg_uart;

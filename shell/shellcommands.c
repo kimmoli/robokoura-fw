@@ -20,6 +20,7 @@ const ShellCommand commands[] =
     { "servo",   cmd_servo },
     { "acc",     cmd_accel },
     { "oled",    cmd_oled },
+    { "volts",    cmd_volts },
     {NULL, NULL}
 };
 
