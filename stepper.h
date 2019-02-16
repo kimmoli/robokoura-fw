@@ -24,12 +24,12 @@ extern StepperDriver STEPPERD6;
 #define DIR_CCW    PAL_HIGH
 #define DIR_RETAIN 9U
 
-#define RATIOD1 25
-#define RATIOD2 50
-#define RATIOD3 15
+#define RATIOD1 15
+#define RATIOD2 1  /* not used */
+#define RATIOD3 25
 #define RATIOD4 25
 #define RATIOD5 25
-#define RATIOD6 5
+#define RATIOD6 25
 
 extern StepperDriver *steppers[6];
 

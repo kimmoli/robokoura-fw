@@ -12,28 +12,24 @@ void cmd_servo(BaseSequentialStream *chp, int argc, char *argv[])
     if (argc >= 2)
     {
         if (strtol(argv[0], NULL, 10) == 1)
+        {
             setServo(&SERVOD1, strtol(argv[1], NULL, 10));
+        }
         else if (strtol(argv[0], NULL, 10) == 2)
         {
-            if (strcmp(argv[1], "loop") == 0)
-            {
-                while (1)
-                {
-                    setServo(&SERVOD2, 1200);
-                    chThdSleepMilliseconds(700);
-                    setServo(&SERVOD2, 1870);
-                    chThdSleepMilliseconds(700);
-                }
-            }
-            else
-            {
-                setServo(&SERVOD2, strtol(argv[1], NULL, 10));
-            }
+            setServo(&SERVOD2, strtol(argv[1], NULL, 10));
+        }
+        else if (strtol(argv[0], NULL, 10) == 3)
+        {
+            setServo(&SERVOD3, strtol(argv[1], NULL, 10));
         }
     }
     else
     {
-        chprintf(chp, "servo [channel] [value in us 1000...2000 (1500 = center)]\n\r");
+        chprintf(chp, "1: %d\n\r", SERVOD1.value);
+        chprintf(chp, "2: %d\n\r", SERVOD2.value);
+        chprintf(chp, "3: %d\n\r", SERVOD3.value);
+        chprintf(chp, "servo [channel] [value in us %d...%d (1500 = center)]\n\r", SERVO_MIN, SERVO_MAX);
     }
 }
 

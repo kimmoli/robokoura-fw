@@ -114,57 +114,89 @@ static THD_FUNCTION(PS2Thread, arg)
             PS2Values->motor2 = 0;
         }
 
-        if (PS2Values->buttons & BUTTON_UP)
+        /* Stepper 1, axis 1, main rotate, left and right buttons */
+        if (PS2Values->buttons & BUTTON_LEFT)
         {
-            setStepper(&STEPPERD1, RATIOD1 * PS2Values->pressure_up, DIR_CW);
+            setStepper(&STEPPERD1, RATIOD1 * PS2Values->pressure_left, DIR_CCW);
         }
-        else if (PS2Values->buttons & BUTTON_DOWN)
+        else if (PS2Values->buttons & BUTTON_RIGHT)
         {
-            setStepper(&STEPPERD1, RATIOD1 * PS2Values->pressure_down, DIR_CCW);
+            setStepper(&STEPPERD1, RATIOD1 * PS2Values->pressure_right, DIR_CW);
         }
         else
         {
             setStepper(&STEPPERD1, 0, DIR_RETAIN);
         }
 
-        if (PS2Values->buttons & BUTTON_LEFT)
-        {
-            setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_left, DIR_CW);
-        }
-        else if (PS2Values->buttons & BUTTON_RIGHT)
-        {
-            setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_right, DIR_CCW);
-        }
-        else
-        {
-            setStepper(&STEPPERD5, 0, DIR_RETAIN);
-        }
+        /* stepper 2 not used */
 
-        if (PS2Values->buttons & BUTTON_TRIANGLE && (limits & 0x01) == 0x01)
+        /* stepper 3, axis 2, main up down, up and down buttons */
+        if (PS2Values->buttons & BUTTON_UP)
         {
-            setStepper(&STEPPERD3, RATIOD3 * PS2Values->pressure_triangle, DIR_CW);
+            setStepper(&STEPPERD3, RATIOD3 * PS2Values->pressure_up, DIR_CCW);
         }
-        else if (PS2Values->buttons & BUTTON_X && (limits & 0x02) == 0x02)
+        else if (PS2Values->buttons & BUTTON_DOWN)
         {
-            setStepper(&STEPPERD3, RATIOD3 * PS2Values->pressure_x, DIR_CCW);
+            setStepper(&STEPPERD3, RATIOD3 * PS2Values->pressure_down, DIR_CW);
         }
         else
         {
             setStepper(&STEPPERD3, 0, DIR_RETAIN);
         }
 
-        if (PS2Values->buttons & BUTTON_SQUARE)
+        /* stepper 4, axis 3, second up down, triangle and X */
+        if (PS2Values->buttons & BUTTON_TRIANGLE && (limits & 0x01) == 0x01)
         {
-            setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_square, DIR_CW);
+            setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_triangle, DIR_CCW);
         }
-        else if (PS2Values->buttons & BUTTON_CIRCLE)
+        else if (PS2Values->buttons & BUTTON_X && (limits & 0x02) == 0x02)
         {
-            setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_circle, DIR_CCW);
+            setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_x, DIR_CW);
         }
         else
         {
             setStepper(&STEPPERD4, 0, DIR_RETAIN);
         }
+
+        /* stepper 5, arm up down, buttons square and circle */
+        if (PS2Values->buttons & BUTTON_SQUARE)
+        {
+            setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_square, DIR_CCW);
+        }
+        else if (PS2Values->buttons & BUTTON_CIRCLE)
+        {
+            setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_circle, DIR_CW);
+        }
+        else
+        {
+            setStepper(&STEPPERD5, 0, DIR_RETAIN);
+        }
+
+        /* stepper 6, arm rotate, L1 and L2 buttons */
+        if (PS2Values->buttons & BUTTON_L1)
+        {
+            setStepper(&STEPPERD6, RATIOD6 * 10, DIR_CCW);
+        }
+        else if (PS2Values->buttons & BUTTON_L2)
+        {
+            setStepper(&STEPPERD6, RATIOD6 * 10, DIR_CW);
+        }
+        else
+        {
+            setStepper(&STEPPERD6, 0, DIR_RETAIN);
+        }
+
+        /* servo 1, arm clamp, R1 and R2 buttons */
+        if (PS2Values->buttons & BUTTON_R1)
+        {
+            SERVOD1.value += 5;
+        }
+        else if (PS2Values->buttons & BUTTON_R2)
+        {
+            SERVOD1.value -= 5;
+        }
+
+        updateServo(&SERVOD1);
     }
 
     chThdExit(MSG_OK);
