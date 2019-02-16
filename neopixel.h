@@ -21,5 +21,8 @@ extern uint32_t neoLedColors[];
 extern ledloopConfig_t *ledloopConfig;
 extern void initNeopixel(void);
 extern uint8_t neoTxBuf[8 * NUMLEDS];
+
+extern uint32_t dim(uint32_t color, uint32_t p);
+extern void blink(void);
 #endif // _NEOPIXEL_H
 

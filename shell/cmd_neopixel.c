@@ -18,16 +18,6 @@ const uint8_t HSVpower[121] =
 215, 217, 219, 221, 223, 225, 227, 229, 232, 234, 236, 238, 240, 242, 244,
 246, 249, 251, 253, 255};
 
-uint32_t dim(uint32_t color, uint32_t p)
-{
-    if (p >= 100)
-        return color;
-
-    return ((color & 0xff) * p / 100) |
-           ((((color & 0xff00) >> 8) * p / 100) << 8) |
-           ((((color & 0xff0000) >> 16) * p / 100) << 16);
-}
-
 uint32_t parseColor(char *arg)
 {
     uint32_t color = 0;
@@ -236,6 +226,23 @@ void cmd_neopixel(BaseSequentialStream *chp, int argc, char *argv[])
                 chVTReset(&ledloopVt);
             chVTSet(&ledloopVt, MS2ST(ledloopConfig->delay), ledrainbow, NULL);
         }
+        else if (strcmp(argv[0], "blink") == 0)
+        {
+            blink();
+        }
+        else if (strcmp(argv[0], "stop") == 0)
+        {
+            if (chVTIsArmed(&ledloopVt))
+            {
+                chVTReset(&ledloopVt);
+            }
+
+            for (i=0; i < NUMLEDS ; i++)
+            {
+                neoLedColors[i] = 0;
+            }
+        }
+
     }
     else
     {

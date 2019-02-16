@@ -3,6 +3,7 @@
 #include "helpers.h"
 
 static virtual_timer_t vt1;
+static virtual_timer_t ledBlinkVt;
 static void neoTXEnd(UARTDriver *uartp);
 static void neoSend(void *p);
 static void encodeBits( uint32_t color , uint8_t *buffer );
@@ -131,5 +132,63 @@ void encodeBits( uint32_t color , uint8_t *b )
         *b = t;
 
         b++;
+    }
+}
+
+uint32_t dim(uint32_t color, uint32_t p)
+{
+    if (p >= 100)
+        return color;
+
+    return ((color & 0xff) * p / 100) |
+           ((((color & 0xff00) >> 8) * p / 100) << 8) |
+           ((((color & 0xff0000) >> 16) * p / 100) << 16);
+}
+
+void ledBlink(void *p)
+{
+    (void) p;
+    static volatile int state = 0;
+    static volatile int delay = 300;
+
+    for (int i=0 ; i < NUMLEDS ; i++)
+    {
+        neoLedColors[i] = dim(((state & 1) == 1) ? 0xffa500 : 0x000000, 10);
+    }
+
+    if (state == 6)
+    {
+        delay = 300;
+        state = 0;
+    }
+    else
+    {
+        delay = ((state & 1) == 1) ? 50 : 100;
+        state++;
+    }
+
+    chSysLockFromISR();
+    chVTResetI(&ledBlinkVt);
+    chVTSetI(&ledBlinkVt, MS2ST(delay), ledBlink, NULL);
+    chSysUnlockFromISR();
+}
+
+
+void blink(void)
+{
+    int i;
+
+    if (chVTIsArmed(&ledBlinkVt))
+    {
+        chVTReset(&ledBlinkVt);
+
+        for (i=0; i < NUMLEDS ; i++)
+        {
+            neoLedColors[i] = 0;
+        }
+    }
+    else
+    {
+        chVTSet(&ledBlinkVt, MS2ST(100), ledBlink, NULL);
     }
 }

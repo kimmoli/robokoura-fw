@@ -3,6 +3,7 @@
 #include "i2c.h"
 #include "stepper.h"
 #include "servo.h"
+#include "neopixel.h"
 #include <stdlib.h>
 #include "helpers.h"
 
@@ -63,6 +64,7 @@ static THD_FUNCTION(PS2Thread, arg)
 {
     (void)arg;
     event_listener_t elPS2;
+    bool sel = false;
 
     chEvtRegister(&PS2Poll, &elPS2, 9);
 
@@ -114,6 +116,20 @@ static THD_FUNCTION(PS2Thread, arg)
             PS2Values->motor2 = 0;
         }
 
+        if (PS2Values->buttons & BUTTON_SELECT)
+        {
+            if (!sel)
+            {
+                palToggleLine(LINE_ENABLE_N);
+                blink();
+                sel = true;
+            }
+        }
+        else
+        {
+            sel = false;
+        }
+
         /* Stepper 1, axis 1, main rotate, left and right buttons */
         if (PS2Values->buttons & BUTTON_LEFT)
         {
@@ -145,11 +161,11 @@ static THD_FUNCTION(PS2Thread, arg)
         }
 
         /* stepper 4, axis 3, second up down, triangle and X */
-        if (PS2Values->buttons & BUTTON_TRIANGLE && (limits & 0x01) == 0x01)
+        if (PS2Values->buttons & BUTTON_TRIANGLE && (limits & 0x02) == 0x02)
         {
             setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_triangle, DIR_CCW);
         }
-        else if (PS2Values->buttons & BUTTON_X && (limits & 0x02) == 0x02)
+        else if (PS2Values->buttons & BUTTON_X && (limits & 0x01) == 0x01)
         {
             setStepper(&STEPPERD4, RATIOD4 * PS2Values->pressure_x, DIR_CW);
         }

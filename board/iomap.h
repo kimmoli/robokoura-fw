@@ -1041,7 +1041,7 @@
                                      PIN_ODR_LOW(GPIOE_PE11_DIR_3) | \
                                      PIN_ODR_LOW(GPIOE_PE12_DIR_4) | \
                                      PIN_ODR_LOW(GPIOE_PE13_DIR_5) | \
-                                     PIN_ODR_LOW(GPIOE_PE14_ENABLE_N) | \
+                                     PIN_ODR_HIGH(GPIOE_PE14_ENABLE_N) | \
                                      PIN_ODR_HIGH(GPIOE_PE15_NC))
 
 /*
