@@ -9,6 +9,7 @@ struct StepperDriver
     int32_t setFrequency;
     uint32_t currentDirection;
     uint32_t setDirection;
+    bool noAccel;
 };
 
 typedef struct StepperDriver StepperDriver;

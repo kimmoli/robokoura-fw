@@ -36,32 +36,6 @@ uint32_t parseColor(char *arg)
     return color;
 }
 
-void ledloop(void *p)
-{
-    (void) p;
-    int i;
-    static volatile uint32_t led0 = 0;
-    static volatile uint32_t led1 = NUMLEDS-1;
-
-    for (i=0; i < NUMLEDS ; i++)
-    {
-        neoLedColors[i] = 0;
-    }
-
-    neoLedColors[led0++] = ledloopConfig->color[0];
-    neoLedColors[led1--] = ledloopConfig->color[1];
-
-    if (led0 >= NUMLEDS)
-        led0 = 0;
-    if (led1 >= NUMLEDS)
-        led1 = NUMLEDS-1;
-
-    chSysLockFromISR();
-    chVTResetI(&ledloopVt);
-    chVTSetI(&ledloopVt, MS2ST(ledloopConfig->delay), ledloop, NULL);
-    chSysUnlockFromISR();
-}
-
 void ledrainbow(void *p)
 {
     (void) p;
@@ -113,10 +87,8 @@ void cmd_neopixel(BaseSequentialStream *chp, int argc, char *argv[])
 
     int i;
     uint32_t color;
-    uint32_t color1;
 
     color = 0;
-    color1 = 0;
 
     if (argc >= 1)
     {
@@ -161,39 +133,7 @@ void cmd_neopixel(BaseSequentialStream *chp, int argc, char *argv[])
         }
         else if (strcmp(argv[0], "loop") == 0)
         {
-            color = 1; /* Dimmest blue */
-
-            if (argc >= 2)
-            {
-                if (strcmp(argv[1], "stop") == 0)
-                {
-                    if (chVTIsArmed(&ledloopVt))
-                        chVTReset(&ledloopVt);
-                    return;
-                }
-
-                color = parseColor(argv[1]);
-            }
-
-            color1 = ~color;
-
-            if (argc >= 3 )
-            {
-                color = dim(color, strtol(argv[2], NULL, 10));
-                color1 = dim(color1, strtol(argv[2], NULL, 10));
-            }
-
-            ledloopConfig->color[0] = color;
-            ledloopConfig->color[1] = color1;
-
-            if (argc >= 4)
-                ledloopConfig->delay = strtol(argv[3], NULL, 10);
-            else
-                ledloopConfig->delay = 50;
-
-            if (chVTIsArmed(&ledloopVt))
-                chVTReset(&ledloopVt);
-            chVTSet(&ledloopVt, MS2ST(ledloopConfig->delay), ledloop, NULL);
+            ledLoop();
         }
         else if (strcmp(argv[0], "rainbow") == 0)
         {
@@ -228,7 +168,7 @@ void cmd_neopixel(BaseSequentialStream *chp, int argc, char *argv[])
         }
         else if (strcmp(argv[0], "blink") == 0)
         {
-            blink();
+            ledBlink();
         }
         else if (strcmp(argv[0], "stop") == 0)
         {

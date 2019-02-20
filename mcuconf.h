@@ -345,6 +345,6 @@
  */
 #define STM32_WDG_USE_IWDG                  FALSE
 
-//#include "mcuconf_community.h"
+#include "mcuconf_community.h"
 
 #endif /* MCUCONF_H */

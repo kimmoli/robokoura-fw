@@ -10,6 +10,7 @@
 PS2Values_t *PS2Values;
 event_source_t PS2Poll;
 static uint8_t rx[100] = {0};
+bool autoaxis = false;
 
 //uint8_t poll[]={0x01,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 uint8_t poll[]={0x01,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
@@ -110,6 +111,11 @@ static THD_FUNCTION(PS2Thread, arg)
         if (PS2Values->buttons & BUTTON_START)
         {
             PS2Values->motor2 = 255;
+
+            if (!autoaxis)
+                autoaxis = true;
+            else
+                autoaxis = false;
         }
         else
         {
@@ -121,7 +127,7 @@ static THD_FUNCTION(PS2Thread, arg)
             if (!sel)
             {
                 palToggleLine(LINE_ENABLE_N);
-                blink();
+                ledBlink();
                 sel = true;
             }
         }
@@ -183,7 +189,7 @@ static THD_FUNCTION(PS2Thread, arg)
         {
             setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_circle, DIR_CW);
         }
-        else
+        else if (!autoaxis)
         {
             setStepper(&STEPPERD5, 0, DIR_RETAIN);
         }

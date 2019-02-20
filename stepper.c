@@ -55,7 +55,11 @@ static THD_FUNCTION(stepperThread, arg)
                 steppers[i]->setFrequency = 0;
             }
 
-            if (steppers[i]->setFrequency > (steppers[i]->currentFrequency + STEPPER_ACCEL))
+            if (steppers[i]->noAccel)
+            {
+                steppers[i]->currentFrequency = steppers[i]->setFrequency;
+            }
+            else if (steppers[i]->setFrequency > (steppers[i]->currentFrequency + STEPPER_ACCEL))
             {
                 steppers[i]->currentFrequency += STEPPER_ACCEL;
             }
@@ -158,6 +162,7 @@ void initStepper(void)
     STEPPERD1.currentDirection = DIR_RETAIN;
     STEPPERD1.setFrequency = 0;
     STEPPERD1.setDirection = DIR_RETAIN;
+    STEPPERD1.noAccel = false;
     startStepper(&STEPPERD1);
 
     STEPPERD2.pwmp = &PWMD5;
@@ -166,6 +171,7 @@ void initStepper(void)
     STEPPERD2.currentDirection = DIR_RETAIN;
     STEPPERD2.setFrequency = 0;
     STEPPERD2.setDirection = DIR_RETAIN;
+    STEPPERD2.noAccel = false;
     startStepper(&STEPPERD2);
 
     STEPPERD3.pwmp = &PWMD8;
@@ -174,6 +180,7 @@ void initStepper(void)
     STEPPERD3.currentDirection = DIR_RETAIN;
     STEPPERD3.setFrequency = 0;
     STEPPERD3.setDirection = DIR_RETAIN;
+    STEPPERD3.noAccel = false;
     startStepper(&STEPPERD3);
 
     STEPPERD4.pwmp = &PWMD9;
@@ -182,6 +189,7 @@ void initStepper(void)
     STEPPERD4.currentDirection = DIR_RETAIN;
     STEPPERD4.setFrequency = 0;
     STEPPERD4.setDirection = DIR_RETAIN;
+    STEPPERD4.noAccel = false;
     startStepper(&STEPPERD4);
 
     STEPPERD5.pwmp = &PWMD10;
@@ -190,6 +198,7 @@ void initStepper(void)
     STEPPERD5.currentDirection = DIR_RETAIN;
     STEPPERD5.setFrequency = 0;
     STEPPERD5.setDirection = DIR_RETAIN;
+    STEPPERD5.noAccel = false;
     startStepper(&STEPPERD5);
 
     STEPPERD6.pwmp = &PWMD11;
@@ -198,6 +207,7 @@ void initStepper(void)
     STEPPERD6.currentDirection = DIR_RETAIN;
     STEPPERD6.setFrequency = 0;
     STEPPERD6.setDirection = DIR_RETAIN;
+    STEPPERD6.noAccel = false;
     startStepper(&STEPPERD6);
 
     steppers[0] = &STEPPERD1;

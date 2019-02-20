@@ -87,7 +87,7 @@ PROJECT = robokoura
 
 # Imported source files and paths
 CHIBIOS = ./ChibiOS
-# CHIBIOS_CONTRIB = ./ChibiOS-Contrib
+CHIBIOS_CONTRIB = ./ChibiOS-Contrib
 COMMON = ./common
 
 # Startup files.
@@ -105,8 +105,8 @@ include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 # ChibiOS-Contrib
-# include ${CHIBIOS_CONTRIB}/os/hal/hal.mk
-# include ${CHIBIOS_CONTRIB}/os/hal/ports/STM32/STM32F4xx/platform.mk
+include ${CHIBIOS_CONTRIB}/os/hal/hal.mk
+include ${CHIBIOS_CONTRIB}/os/hal/ports/STM32/STM32F4xx/platform.mk
 #Common
 include $(COMMON)/common.mk
 
@@ -126,6 +126,7 @@ CSRC = $(STARTUPSRC) \
        $(SHELLSRC) \
        $(LWSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS_CONTRIB)/os/various/pid.c \
        $(COMMONSRC) \
        i2c.c \
        spi.c \
@@ -136,6 +137,7 @@ CSRC = $(STARTUPSRC) \
        servo.c \
        oled.c \
        adc.c \
+       pid_test.c \
        shell/cmd_deep.c \
        shell/cmd_peep.c \
        shell/cmd_ps2.c \
@@ -145,6 +147,7 @@ CSRC = $(STARTUPSRC) \
        shell/cmd_accel.c \
        shell/cmd_oled.c \
        shell/cmd_volts.c \
+       shell/cmd_pid.c \
        shell/shellcommands.c \
        main.c
 
@@ -182,7 +185,8 @@ INCDIR = ./shell ./threads \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(STREAMSINC) $(SHELLINC) \
-         $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various \
+         $(CHIBIOS_CONTRIB)/os/various \
 
 #
 # Project, sources and paths
