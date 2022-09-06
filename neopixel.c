@@ -182,17 +182,18 @@ void ledLoopVtCb(void *p)
 
     for (i=0; i < NUMLEDS ; i++)
     {
-        neoLedColors[i] = 0;
+        neoLedColors[i] = dim(0xffffff, 10);
+        neoLedColors[led0 % NUMLEDS] = dim(0xffa500, 50);
+        neoLedColors[(led0+1) % NUMLEDS] = dim(0xffa500, 50);
+        neoLedColors[(led0+2) % NUMLEDS] = dim(0xffa500, 50);
+        neoLedColors[(led0+3) % NUMLEDS] = dim(0xffa500, 50);
     }
 
-    neoLedColors[led0++] = dim(0xffa500, 20);
-
-    if (led0 >= NUMLEDS)
-        led0 = 0;
+    led0++;
 
     chSysLockFromISR();
     chVTResetI(&ledLoopVt);
-    chVTSetI(&ledLoopVt, MS2ST(50), ledLoopVtCb, NULL);
+    chVTSetI(&ledLoopVt, MS2ST(20), ledLoopVtCb, NULL);
     chSysUnlockFromISR();
 }
 
@@ -231,6 +232,6 @@ void ledLoop(void)
     }
     else
     {
-        chVTSet(&ledLoopVt, MS2ST(100), ledLoopVtCb, NULL);
+        chVTSet(&ledLoopVt, MS2ST(30), ledLoopVtCb, NULL);
     }
 }

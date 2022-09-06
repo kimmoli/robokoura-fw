@@ -6,10 +6,7 @@
 #include "helpers.h"
 #include "shellcommands.h"
 #include "pid.h"
-
-extern void start_pid(float p, float i, float d);
-extern pidc_t pid;
-extern bool autoaxis;
+#include "pid_test.h"
 
 void cmd_pid(BaseSequentialStream *chp, int argc, char *argv[])
 {
@@ -27,7 +24,7 @@ void cmd_pid(BaseSequentialStream *chp, int argc, char *argv[])
 
     if (!started && argc == 0)
     {
-        start_pid(550.0, 45.0, 0.0);
+        start_pid(550.0, 45.0, 3.0);
         started = true;
         autoaxis = true;
     }

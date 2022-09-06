@@ -6,11 +6,11 @@
 #include "neopixel.h"
 #include <stdlib.h>
 #include "helpers.h"
+#include "pid_test.h"
 
 PS2Values_t *PS2Values;
 event_source_t PS2Poll;
 static uint8_t rx[100] = {0};
-bool autoaxis = false;
 
 //uint8_t poll[]={0x01,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 uint8_t poll[]={0x01,0x42,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
@@ -66,6 +66,7 @@ static THD_FUNCTION(PS2Thread, arg)
     (void)arg;
     event_listener_t elPS2;
     bool sel = false;
+    bool start = false;
 
     chEvtRegister(&PS2Poll, &elPS2, 9);
 
@@ -112,14 +113,20 @@ static THD_FUNCTION(PS2Thread, arg)
         {
             PS2Values->motor2 = 255;
 
-            if (!autoaxis)
-                autoaxis = true;
-            else
-                autoaxis = false;
+            if (!start)
+            {
+                autoaxis = !autoaxis;
+                if (autoaxis)
+                {
+                    start_pid(550.0, 45.0, 3.0);
+                }
+                start = true;
+            }
         }
         else
         {
             PS2Values->motor2 = 0;
+            start = false;
         }
 
         if (PS2Values->buttons & BUTTON_SELECT)
@@ -127,7 +134,7 @@ static THD_FUNCTION(PS2Thread, arg)
             if (!sel)
             {
                 palToggleLine(LINE_ENABLE_N);
-                ledBlink();
+                ledLoop();
                 sel = true;
             }
         }
@@ -183,10 +190,12 @@ static THD_FUNCTION(PS2Thread, arg)
         /* stepper 5, arm up down, buttons square and circle */
         if (PS2Values->buttons & BUTTON_SQUARE)
         {
+            autoaxis = false;
             setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_square, DIR_CCW);
         }
         else if (PS2Values->buttons & BUTTON_CIRCLE)
         {
+            autoaxis = false;
             setStepper(&STEPPERD5, RATIOD5 * PS2Values->pressure_circle, DIR_CW);
         }
         else if (!autoaxis)
